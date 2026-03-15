@@ -11,10 +11,23 @@ const db = mysql.createPool({
   queueLimit: 0
 });
 
-db.getConnection((err, connection) => {
-  if (err) throw err;
-  console.log('MySQL Connected');
-  connection.release();
-});
+// Retry connection on startup to handle MySQL not being ready yet
+function connectWithRetry(retries = 10, delay = 3000) {
+  db.getConnection((err, connection) => {
+    if (err) {
+      if (retries === 0) {
+        console.error('MySQL connection failed after all retries:', err.message);
+        process.exit(1);
+      }
+      console.log(`MySQL not ready, retrying in ${delay / 1000}s... (${retries} left)`);
+      setTimeout(() => connectWithRetry(retries - 1, delay), delay);
+      return;
+    }
+    console.log('MySQL Connected');
+    connection.release();
+  });
+}
+
+connectWithRetry();
 
 module.exports = db;

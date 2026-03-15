@@ -4,38 +4,50 @@ services:
   mysql:
     image: mysql:8
     container_name: mysql
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: Faza
+      MYSQL_ROOT_PASSWORD: Faza123
       MYSQL_DATABASE: crud_app
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
 
   backend:
-    build: ./api
-    container_name: backend-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: backend
     environment:
       DB_HOST: mysql
       DB_USER: root
-      DB_PASSWORD: Faza
+      DB_PASSWORD: Faza123
       DB_NAME: crud_app
+      PORT: 5000
       JWT_SECRET: devopsFazaSuperSecretKey
-      RESET_ADMIN_PASS: 'true'
-    depends_on:
-      - mysql
     ports:
       - "5001:5000"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
 
   frontend:
-    build: ./client
-    container_name: frontend-react
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - app-network
 
 volumes:
-  mysql-data:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
