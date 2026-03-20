@@ -13,6 +13,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Health check for Kubernetes probes
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 // Routes
 app.use('/api/auth', authRoutes);    // 🔐 Login/Register
 app.use('/api/users', userRoutes);   // 👤 User management

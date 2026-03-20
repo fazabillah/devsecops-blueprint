@@ -1,0 +1,28 @@
+namespace: prod
+domain: learndevops.my
+
+image:
+  backend: fazabillah/backend
+  frontend: fazabillah/frontend
+  tag: latest  # CI overrides this with the short commit SHA on every run
+
+replicaCount:
+  backend: 3
+  frontend: 3
+
+mysql:
+  password: ""  # Always passed via --set at deploy time, never committed
+
+tls:
+  email: fazabillah@gmail.com
+
+resources:
+  backend:
+    requests: { cpu: 250m, memory: 256Mi }
+    limits:   { cpu: 500m, memory: 512Mi }
+  frontend:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits:   { cpu: 200m, memory: 256Mi }
+  mysql:
+    requests: { cpu: 500m, memory: 1Gi }
+    limits:   { cpu: 1000m, memory: 2Gi }
