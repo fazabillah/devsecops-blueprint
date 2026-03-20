@@ -21,6 +21,12 @@ spec:
       labels:
         app: backend
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: backend
           image: {{ .Values.image.backend }}:{{ .Values.image.tag }}

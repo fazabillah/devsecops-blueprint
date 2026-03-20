@@ -67,6 +67,9 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: mysql
+  annotations:
+    checkov.io/skip1: "CKV_K8S_23=MySQL official image requires root for data directory init"
+    checkov.io/skip2: "CKV_K8S_22=MySQL requires writable /var/run/mysqld socket file"
 spec:
   serviceName: mysql
   replicas: 1
@@ -78,9 +81,14 @@ spec:
       labels:
         app: mysql
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mysql
           image: mysql:8
+          imagePullPolicy: Always
           ports:
             - containerPort: 3306
           env:
@@ -94,6 +102,16 @@ spec:
                 configMapKeyRef:
                   name: mysql-config
                   key: MYSQL_DATABASE
+          livenessProbe:
+            exec:
+              command: [mysqladmin, ping, -h, localhost]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: [mysqladmin, ping, -h, localhost]
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources:
             requests:
               cpu: {{ .Values.resources.mysql.requests.cpu | quote }}
@@ -101,6 +119,10 @@ spec:
             limits:
               cpu: {{ .Values.resources.mysql.limits.cpu | quote }}
               memory: {{ .Values.resources.mysql.limits.memory | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
