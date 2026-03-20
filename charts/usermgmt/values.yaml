@@ -4,7 +4,7 @@ domain: learndevops.my
 image:
   backend: fazabillah/backend
   frontend: fazabillah/frontend
-  tag: "6f3be82"
+  tag: "6f3be82e0d3b8b4d4919e8c6c90f0632d3e69ee7"
 
 replicaCount:
   backend: 3
