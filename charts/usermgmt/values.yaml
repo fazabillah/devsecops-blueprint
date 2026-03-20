@@ -4,7 +4,7 @@ domain: learndevops.my
 image:
   backend: fazabillah/backend
   frontend: fazabillah/frontend
-  tag: "0.0.0"  # CI overrides this with the short commit SHA on every run
+  tag: "6f3be82"
 
 replicaCount:
   backend: 3
