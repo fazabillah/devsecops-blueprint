@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [develop]
+    branches: [main, develop]
   pull_request:
     branches: [main]
 
@@ -91,7 +91,7 @@ jobs:
           scan-type: fs
           scan-ref: .
           format: template
-          template: "@/contrib/html.tpl"
+          template: "@contrib/html.tpl"
           output: trivy-fs-report.html
           exit-code: 1
           severity: HIGH,CRITICAL
@@ -145,7 +145,7 @@ jobs:
           scan-type: image
           image-ref: ${{ matrix.image }}:${{ env.IMAGE_TAG }}
           format: template
-          template: "@/contrib/html.tpl"
+          template: "@contrib/html.tpl"
           output: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}.html
           exit-code: 0
           severity: HIGH,CRITICAL
