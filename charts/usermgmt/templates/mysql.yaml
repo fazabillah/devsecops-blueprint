@@ -121,8 +121,6 @@ spec:
               memory: {{ .Values.resources.mysql.limits.memory | quote }}
           securityContext:
             allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
