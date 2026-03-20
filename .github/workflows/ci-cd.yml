@@ -90,9 +90,8 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
-          format: template
-          template: "@contrib/html.tpl"
-          output: trivy-fs-report.html
+          format: sarif
+          output: trivy-fs-report.sarif
           exit-code: 1
           severity: HIGH,CRITICAL
       - name: Upload Trivy FS report
@@ -100,7 +99,7 @@ jobs:
         if: always()
         with:
           name: trivy-fs-report
-          path: trivy-fs-report.html
+          path: trivy-fs-report.sarif
 
   # Job 7: Docker build and push (gates on jobs 5-6)
   build-push:
@@ -144,9 +143,8 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{ matrix.image }}:${{ env.IMAGE_TAG }}
-          format: template
-          template: "@contrib/html.tpl"
-          output: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}.html
+          format: sarif
+          output: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}.sarif
           exit-code: 0
           severity: HIGH,CRITICAL
       - name: Upload Trivy image report
@@ -154,7 +152,7 @@ jobs:
         if: always()
         with:
           name: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}
-          path: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}.html
+          path: trivy-image-report-${{ matrix.image == 'fazabillah/backend' && 'backend' || 'frontend' }}.sarif
 
   # Job 9: Checkov — IaC scan: Helm chart + Terraform (parallel with trivy-image)
   checkov:
