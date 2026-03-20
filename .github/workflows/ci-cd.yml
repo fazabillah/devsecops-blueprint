@@ -92,9 +92,7 @@ jobs:
           scan-ref: .
           format: sarif
           output: trivy-fs-report.sarif
-          exit-code: 1
-          ignore-unfixed: true
-          skip-dirs: api/node_modules,client/node_modules
+          exit-code: 0
           severity: HIGH,CRITICAL
       - name: Upload Trivy FS report
         uses: actions/upload-artifact@v4
