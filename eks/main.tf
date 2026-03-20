@@ -92,11 +92,43 @@ resource "aws_security_group" "devopsfaza_node_sg" {
 
 # ── EKS Cluster ───────────────────────────────────────────────────────────────
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_kms_key" "devopsfaza_eks_secrets" {
   description             = "KMS key for EKS secrets encryption"
   deletion_window_in_days = 7
   enable_key_rotation     = true
-  tags = { Name = "devopsfaza-eks-secrets-key" }
+  tags                    = { Name = "devopsfaza-eks-secrets-key" }
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Enable IAM Root Access"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "Allow EKS Secrets Encryption"
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_eks_cluster" "devopsfaza" {
