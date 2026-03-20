@@ -38,10 +38,17 @@ resource "aws_route_table_association" "devopsfaza_association" {
   route_table_id = aws_route_table.devopsfaza_route_table.id
 }
 
+# Restrict the default SG to deny all traffic — prevents accidental exposure if a resource lands here
+resource "aws_default_security_group" "devopsfaza_default" {
+  vpc_id = aws_vpc.devopsfaza_vpc.id
+  tags   = { Name = "devopsfaza-default-sg-restricted" }
+}
+
 # ── Security Groups ───────────────────────────────────────────────────────────
 
 resource "aws_security_group" "devopsfaza_cluster_sg" {
-  vpc_id = aws_vpc.devopsfaza_vpc.id
+  vpc_id      = aws_vpc.devopsfaza_vpc.id
+  description = "EKS cluster control plane security group"
   egress {
     from_port   = 0
     to_port     = 0
@@ -63,12 +70,13 @@ resource "aws_security_group_rule" "cluster_ingress_nodes_443" {
 }
 
 resource "aws_security_group" "devopsfaza_node_sg" {
-  vpc_id = aws_vpc.devopsfaza_vpc.id
+  vpc_id      = aws_vpc.devopsfaza_vpc.id
+  description = "EKS worker node security group"
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [aws_vpc.devopsfaza_vpc.cidr_block]
   }
   egress {
     from_port   = 0
@@ -89,6 +97,8 @@ resource "aws_eks_cluster" "devopsfaza" {
     subnet_ids         = aws_subnet.devopsfaza_subnet[*].id
     security_group_ids = [aws_security_group.devopsfaza_cluster_sg.id]
   }
+
+  enabled_cluster_log_types = ["api", "audit", "authenticator"]
 }
 
 # ── OIDC Provider (required for IRSA) ────────────────────────────────────────
