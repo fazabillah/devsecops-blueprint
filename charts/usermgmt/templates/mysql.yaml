@@ -72,6 +72,7 @@ metadata:
     checkov.io/skip2: "CKV_K8S_22=MySQL requires writable /var/run/mysqld socket file"
     checkov.io/skip3: "CKV_K8S_37=MySQL requires SETGID capability for group switching during data directory initialization"
     checkov.io/skip4: "CKV_K8S_25=MySQL requires SETGID capability for group switching during data directory initialization"
+    checkov.io/skip5: "CKV_K8S_20=MySQL requires allowPrivilegeEscalation for setuid call during entrypoint initialization"
 spec:
   serviceName: mysql
   replicas: 1
@@ -122,12 +123,13 @@ spec:
               cpu: {{ .Values.resources.mysql.limits.cpu | quote }}
               memory: {{ .Values.resources.mysql.limits.memory | quote }}
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             capabilities:
               drop:
                 - ALL
               add:
                 - SETGID
+                - SETUID
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
