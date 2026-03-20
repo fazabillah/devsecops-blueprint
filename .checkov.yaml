@@ -6,3 +6,5 @@ skip-check:
   - CKV_AWS_130  # Public subnets intentional: EKS nodes require internet access; NAT gateway out of scope
   - CKV_AWS_382  # Open egress required: EKS nodes must reach ECR, AWS APIs, and pull container images
   - CKV2_AWS_11  # VPC flow logging requires IAM + CloudWatch setup; deferred as out of scope for this portfolio
+  - CKV_AWS_38  # Public endpoint access intentional: local kubectl requires public endpoint; private VPN/bastion out of scope
+  - CKV_AWS_39  # Public endpoint intentional: disabling requires VPC-internal access (bastion/VPN), out of scope for portfolio

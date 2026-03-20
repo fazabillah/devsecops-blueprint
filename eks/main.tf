@@ -54,6 +54,7 @@ resource "aws_security_group" "devopsfaza_cluster_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
   tags = { Name = "devopsfaza-cluster-sg" }
 }
@@ -77,17 +78,26 @@ resource "aws_security_group" "devopsfaza_node_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [aws_vpc.devopsfaza_vpc.cidr_block]
+    description = "Allow all inbound traffic from within VPC"
   }
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
   tags = { Name = "devopsfaza-node-sg" }
 }
 
 # ── EKS Cluster ───────────────────────────────────────────────────────────────
+
+resource "aws_kms_key" "devopsfaza_eks_secrets" {
+  description             = "KMS key for EKS secrets encryption"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+  tags = { Name = "devopsfaza-eks-secrets-key" }
+}
 
 resource "aws_eks_cluster" "devopsfaza" {
   name     = "devopsfaza-cluster"
@@ -98,7 +108,14 @@ resource "aws_eks_cluster" "devopsfaza" {
     security_group_ids = [aws_security_group.devopsfaza_cluster_sg.id]
   }
 
-  enabled_cluster_log_types = ["api", "audit", "authenticator"]
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+  encryption_config {
+    provider {
+      key_arn = aws_kms_key.devopsfaza_eks_secrets.arn
+    }
+    resources = ["secrets"]
+  }
 }
 
 # ── OIDC Provider (required for IRSA) ────────────────────────────────────────
