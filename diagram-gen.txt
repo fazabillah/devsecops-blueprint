@@ -1,0 +1,74 @@
+╭─── Claude Code v2.1.81 ──────────────────────────────────────────────────────╮
+│                                                 │ Tips for getting started   │
+│                Welcome back Faza!               │ ✔ Run /init to create a C… │
+│                                                 │ ────────────────────────── │
+│                     ▐▛███▜▌                     │ Recent activity            │
+│                    ▝▜█████▛▘                    │ No recent activity         │
+│                      ▘▘ ▝▝                      │                            │
+│                                                 │                            │
+│             Sonnet 4.6 · Claude Pro             │                            │
+│   ~/Documents/github_repo/devsecops-blueprint   │                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+❯ /clear                                                                        
+  ⎿  (no content)
+
+❯ how can i leverage eraser.io to make me an architectural diagram for this     
+project repo? what prompt should i input to eraser.io? or can i make eraser.io  
+to access my github repo and create the diagram?                                
+
+⏺ Eraser.io has two ways to approach this:
+
+  Option 1: GitHub Integration (Recommended)
+
+  Eraser.io has a native GitHub integration that reads your repo directly.
+
+  1. Go to eraser.io and create a workspace
+  2. Create a new diagram → choose "AI Diagram"
+  3. In the AI panel, there's a "Connect GitHub" option — link your repo
+  4. It will scan the repo structure and generate a diagram automatically
+
+  This is the easiest path since your repo already has a clear structure.
+
+  Option 2: Text Prompt
+
+  If you prefer a manual prompt, here's one tailored to this repo:
+
+  Generate an architecture diagram for a DevSecOps 3-tier web application with
+  the following components:
+
+  Infrastructure:
+  - AWS EKS cluster provisioned via Terraform
+  - ArgoCD for GitOps continuous delivery
+  - DockerHub as container registry
+
+  Application tiers (deployed via Helm chart "usermgmt"):
+  - Frontend: React SPA served by nginx:alpine
+  - Backend: Node.js/Express REST API with JWT auth
+  - Database: MySQL with persistent EBS volume
+
+  CI/CD Pipeline (GitHub Actions, 10 jobs):
+  - ESLint, npm audit (parallel)
+  - GitLeaks secret scanning
+  - Hadolint Dockerfile linting
+  - SonarCloud SAST
+  - Trivy filesystem + image scan
+  - Checkov IaC scan (Helm + Terraform)
+  - Docker build & push to DockerHub
+  - Auto-update values.yaml → triggers ArgoCD sync
+
+  Networking:
+  - NetworkPolicies for least-privilege pod traffic
+  - cert-manager for TLS
+  - nginx ingress
+
+  Show the flow from developer push → GitHub Actions → DockerHub → ArgoCD → EKS.
+
+  What to Ask For Specifically
+
+  When creating the diagram in Eraser, select "Cloud Architecture" as the
+  diagram type, not a generic flowchart. This gives you AWS-styled icons and
+  proper service shapes.
+
+  The GitHub integration will get you further faster since it reads your actual
+  charts/, terraform/, and .github/workflows/ directories directly.

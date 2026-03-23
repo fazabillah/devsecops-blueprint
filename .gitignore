@@ -73,6 +73,7 @@ claude/
 claude.log
 claude-*.log
 *.claude
+CLAUDE.md
 
 # Security & secrets
 *.pem
@@ -111,8 +112,7 @@ logstash.conf.local
 elasticsearch/data/
 kibana.yml.local
 
-# MySQL
-*.sql
+# MySQLi ha
 *.sqlite
 *.db
 mysql-data/
@@ -168,4 +168,5 @@ nginx/error.log
 nginx/access.log
 
 # personal
-guide/
+local-only/
+.obsidian
